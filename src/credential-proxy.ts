@@ -41,6 +41,8 @@ export function startCredentialProxy(
   const upstreamUrl = new URL(
     secrets.ANTHROPIC_BASE_URL || 'https://api.anthropic.com',
   );
+  const upstreamBasePath =
+    upstreamUrl.pathname === '/' ? '' : upstreamUrl.pathname.replace(/\/$/, '');
   const isHttps = upstreamUrl.protocol === 'https:';
   const makeRequest = isHttps ? httpsRequest : httpRequest;
 
@@ -83,7 +85,7 @@ export function startCredentialProxy(
           {
             hostname: upstreamUrl.hostname,
             port: upstreamUrl.port || (isHttps ? 443 : 80),
-            path: req.url,
+            path: upstreamBasePath + req.url,
             method: req.method,
             headers,
           } as RequestOptions,
